@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
-BUCKET = "alsimgmgrbucket"
+BUCKET = "alsfinalprojecttop-us-west-2"
 
 
 @app.route("/")
