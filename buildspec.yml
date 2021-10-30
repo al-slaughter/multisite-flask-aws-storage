@@ -15,7 +15,8 @@ phases:
       - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
       - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
       - export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN
-      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - export BUCKET_NAME=$BUCKET_NAME
+      - docker build --build-arg bucketname=${BUCKET_NAME} -t $IMAGE_REPO_NAME:$IMAGE_TAG .
       - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:

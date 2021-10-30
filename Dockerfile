@@ -13,6 +13,10 @@ COPY . /home/flask/app/web
 
 RUN chown -R flask:flaskgroup /home/flask
 
+ARG bucketname
+
+RUN sed -i "s/BUCKET_NAME/$bucketname/" /home/flask/app/web/app.py
+
 EXPOSE 5000
 USER flask
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
