@@ -16,6 +16,7 @@ RUN chown -R flask:flaskgroup /home/flask
 ARG bucketname
 
 RUN sed -i "s/BUCKET_NAME/$bucketname/" /home/flask/app/web/app.py
+RUN cat /home/flask/app/web/app.py
 
 EXPOSE 5000
 USER flask
