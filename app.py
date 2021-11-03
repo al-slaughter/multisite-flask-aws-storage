@@ -36,7 +36,7 @@ def list():
     # Step 3: Get the payload
     payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
     user = payload['username']
-    contents = show_image(BUCKET + "/" + user + "/")
+    contents = show_image(user, BUCKET)
     return render_template('collection.html', contents=contents)
 
 
