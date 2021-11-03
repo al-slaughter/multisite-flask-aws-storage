@@ -58,11 +58,11 @@ def upload():
         # Step 3: Get the payload
         payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
         user = payload['username']
-        upload = "uploads/" + user + f"/{f.filename}"
-        folder = os.path.join(UPLOAD_FOLDER, user)
+        upload = "uploads/" + f"{f.filename}"
+        folder = BUCKET + "/" + user)
         create_folder(user, BUCKET)
         f.save(os.path.join(UPLOAD_FOLDER, secure_filename(f.filename)))
-        upload_file(upload, BUCKET)
+        upload_file(upload, folder)
         return redirect("/")
 
 
