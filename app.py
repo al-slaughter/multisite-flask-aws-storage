@@ -18,7 +18,7 @@ def home():
     contents = list_files(BUCKET)
     print(contents)
     # Step 1: Get the key id from JWT headers (the kid field)
-    encoded_jwt = request.environ.get('x-amzn-oidc-data')
+    encoded_jwt = json.loads(request.environ.get('x-amzn-oidc-data'))
     # encoded_jwt = headers.dict['x-amzn-oidc-data']
     jwt_headers = encoded_jwt.split('.')[0]
     decoded_jwt_headers = base64.b64decode(jwt_headers)
