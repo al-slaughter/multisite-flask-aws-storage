@@ -4,7 +4,7 @@ import boto3
 def create_folder(folder_name, bucket):
     s3_client = boto3.client('s3')
     folder = "uploads/" + folder_name + "/"
-    response = s3_client.put_object(Bucket=bucket, key=folder)
+    response = s3_client.put_object(Bucket=bucket, Key=folder)
     return response
 
 
