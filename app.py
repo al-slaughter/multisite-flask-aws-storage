@@ -61,7 +61,7 @@ def upload():
         upload = "uploads/" + user + f"/{f.filename}"
         folder = os.path.join(UPLOAD_FOLDER, user)
         create_folder(user, BUCKET)
-        f.save(os.path.join(folder, secure_filename(f.filename)))
+        f.save(os.path.join(UPLOAD_FOLDER, secure_filename(f.filename)))
         upload_file(upload, BUCKET, user)
         return redirect("/")
 
