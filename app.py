@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, send_file
+from flask import Flask, render_template, request, redirect, send_file, url_for
 from s3_functions import list_files, upload_file, show_image, create_folder
 from werkzeug.utils import secure_filename
 import jwt
@@ -12,6 +12,9 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 BUCKET = "dev-finalproject-img-mgr20211101145336209100000001"
 region = "us-west-2"
+app.config.update(dict(
+  PREFERRED_URL_SCHEME = 'https'
+))
 
 @app.route("/")
 def home():
@@ -36,8 +39,11 @@ def list():
     # Step 3: Get the payload
     payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
     user = payload['username']
+    #user="fairygothmom"
     contents = show_image(user, BUCKET)
-    print(contents)
+    #print("start")
+    #print(contents)
+    #print("end")
     return render_template('collection.html', contents=contents)
 
 
@@ -66,7 +72,7 @@ def upload():
         create_folder(user, BUCKET)
         f.save(os.path.join(folder, secure_filename(f.filename)))
         upload_file(upload, BUCKET)
-        return redirect("/")
+        return redirect(url_for("/", _schema="https"))
 
 
 if __name__ == '__main__':
