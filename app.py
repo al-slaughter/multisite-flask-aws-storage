@@ -37,6 +37,7 @@ def list():
     payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
     user = payload['username']
     contents = show_image(user, BUCKET)
+    print(contents)
     return render_template('collection.html', contents=contents)
 
 
