@@ -17,34 +17,26 @@ region = "us-west-2"
 def home():
     contents = list_files(BUCKET)
     print(contents)
-    # Step 1: Get the key id from JWT headers (the kid field)
-    #encoded_jwt = request.environ.get('x-amzn-oidc-identity')
-    encoded_jwt = request.headers.get('x-amzn-oidc-data')
-    #encoded_jwt = headers.dict['x-amzn-oidc-data']
-    jwt_headers = encoded_jwt.split('.')[0]
-    #print(jwt_headers)
-    decoded_jwt_headers = base64.b64decode(jwt_headers)
-    decoded_jwt_headers = decoded_jwt_headers.decode("utf-8")
-    decoded_json = json.loads(decoded_jwt_headers)
-    kid = decoded_json['kid']
-    # print(kid)
-
-    # Step 2: Get the public key from regional endpoint
-    url = 'https://public-keys.auth.elb.' + region + '.amazonaws.com/' + kid
-    req = requests.get(url)
-    pub_key = req.text
-
-    # # Step 3: Get the payload
-    payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
-    print("start")
-    print(payload)
-    print("end")
     return render_template('index.html')
 
 
 @app.route("/pics")
 def list():
-    contents = show_image(BUCKET)
+    # Step 1: Get the key id from JWT headers (the kid field)
+    encoded_jwt = request.headers.get('x-amzn-oidc-data')
+    jwt_headers = encoded_jwt.split('.')[0]
+    decoded_jwt_headers = base64.b64decode(jwt_headers)
+    decoded_jwt_headers = decoded_jwt_headers.decode("utf-8")
+    decoded_json = json.loads(decoded_jwt_headers)
+    kid = decoded_json['kid']
+    # Step 2: Get the public key from regional endpoint
+    url = 'https://public-keys.auth.elb.' + region + '.amazonaws.com/' + kid
+    req = requests.get(url)
+    pub_key = req.text
+    # Step 3: Get the payload
+    payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
+    user = payload['username']
+    contents = show_image(BUCKET + "/" + user)
     return render_template('collection.html', contents=contents)
 
 
@@ -53,7 +45,22 @@ def upload():
     if request.method == "POST":
         f = request.files['file']
         f.save(os.path.join(UPLOAD_FOLDER, secure_filename(f.filename)))
-        upload_file(f"uploads/{f.filename}", BUCKET)
+        # Step 1: Get the key id from JWT headers (the kid field)
+        encoded_jwt = request.headers.get('x-amzn-oidc-data')
+        jwt_headers = encoded_jwt.split('.')[0]
+        decoded_jwt_headers = base64.b64decode(jwt_headers)
+        decoded_jwt_headers = decoded_jwt_headers.decode("utf-8")
+        decoded_json = json.loads(decoded_jwt_headers)
+        kid = decoded_json['kid']
+        # Step 2: Get the public key from regional endpoint
+        url = 'https://public-keys.auth.elb.' + region + '.amazonaws.com/' + kid
+        req = requests.get(url)
+        pub_key = req.text
+        # Step 3: Get the payload
+        payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
+        user = payload['username']
+        upload = BUCKET + "/" + user
+        upload_file(f"uploads/{f.filename}", upload)
         return redirect("/")
 
 
