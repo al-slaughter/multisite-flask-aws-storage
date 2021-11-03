@@ -1,6 +1,6 @@
 import os
 from flask import Flask, render_template, request, redirect, send_file
-from s3_functions import list_files, upload_file, show_image
+from s3_functions import list_files, upload_file, show_image, create_folder
 from werkzeug.utils import secure_filename
 import jwt
 import requests
@@ -44,7 +44,6 @@ def list():
 def upload():
     if request.method == "POST":
         f = request.files['file']
-        f.save(os.path.join(UPLOAD_FOLDER, secure_filename(f.filename)))
         # Step 1: Get the key id from JWT headers (the kid field)
         encoded_jwt = request.headers.get('x-amzn-oidc-data')
         jwt_headers = encoded_jwt.split('.')[0]
@@ -59,8 +58,11 @@ def upload():
         # Step 3: Get the payload
         payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
         user = payload['username']
-        upload = BUCKET + "/" + user
-        upload_file(f"uploads/{f.filename}", upload)
+        upload = "uploads/" + user + f"/{f.filename}"
+        folder = os.path.join(UPLOAD_FOLDER, user)
+        f.save(os.path.join(folder, secure_filename(f.filename)))
+        create_folder(user, BUCKET)
+        upload_file(upload, BUCKET, user)
         return redirect("/")
 
 

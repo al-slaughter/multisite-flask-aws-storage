@@ -1,10 +1,19 @@
 import boto3
 
+
+def create_folder(folder_name, bucket):
+    s3_client = boto3.client('s3')
+    folder = "uploads/" + folder_name + "/"
+    response = s3_client.put_object(Bucket=bucket, key=folder)
+    return response
+
+
 def upload_file(file_name, bucket):
     object_name = file_name
     s3_client = boto3.client('s3')
     response = s3_client.upload_file(file_name, bucket, object_name)
     return response
+
 
 def list_files(bucket):
     s3_client = boto3.client('s3')
@@ -16,6 +25,7 @@ def list_files(bucket):
     except Exception as e:
         pass
     return contents
+
 
 def show_image(bucket):
     s3_client = boto3.client('s3')
@@ -30,4 +40,3 @@ def show_image(bucket):
         pass
     # print("[DATA] : The contents inside show_image = ", public_urls)
     return public_urls
-    
