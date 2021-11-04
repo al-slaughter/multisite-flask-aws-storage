@@ -12,9 +12,6 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 BUCKET = "dev-finalproject-img-mgr20211101145336209100000001"
 region = "us-west-2"
-app.config.update(dict(
-  PREFERRED_URL_SCHEME = 'https'
-))
 
 @app.route("/")
 def home():
@@ -38,12 +35,9 @@ def list():
     pub_key = req.text
     # Step 3: Get the payload
     payload = jwt.decode(encoded_jwt, pub_key, algorithms=['ES256'])
+    print(payload)
     user = payload['username']
-    #user="fairygothmom"
     contents = show_image(user, BUCKET)
-    #print("start")
-    #print(contents)
-    #print("end")
     return render_template('collection.html', contents=contents)
 
 
@@ -72,7 +66,8 @@ def upload():
         create_folder(user, BUCKET)
         f.save(os.path.join(folder, secure_filename(f.filename)))
         upload_file(upload, BUCKET)
-        return redirect(url_for("/", _schema="https"))
+        root_url = str(request.url_root).replace('http', 'https', 1)
+        return redirect(root_url)
 
 
 if __name__ == '__main__':

@@ -35,7 +35,6 @@ def show_image(user, bucket):
         upload_folder = "uploads/" + user + "/"
         for item in s3_client.list_objects(Bucket=bucket)['Contents']:
             if upload_folder in item['Key'] and item['Key'] != upload_folder:
-                print(item['Key'])
                 presigned_url = s3_client.generate_presigned_url('get_object', Params = {'Bucket': bucket, 'Key': item['Key']}, ExpiresIn = 100)
                 # print("[DATA] : presigned url = ", presigned_url)
                 public_urls.append(presigned_url)
