@@ -1,4 +1,4 @@
-FROM python:3.6.9
+FROM 017580275405.dkr.ecr.us-west-2.amazonaws.com/python:3.6.9
 
 RUN groupadd flaskgroup && useradd -m -g flaskgroup -s /bin/bash flask
 
